@@ -1,0 +1,27 @@
+# Dependencies
+**/node_modules
+
+# Next.js
+frontend/.next
+frontend/out
+
+# Backend builds
+backend/dist
+backend/build
+
+# Environment files
+**/.env
+**/.env.local
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode
+
+# Runtime files
+*.pid
