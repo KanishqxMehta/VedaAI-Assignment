@@ -47,13 +47,13 @@ export default function AssignmentOutputPage() {
 
   useEffect(() => {
     // Setup socket to always listen for updates
-    const socket = io('http://localhost:4000');
+    const socket = io((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'));
     socket.on('assignmentUpdate', (update) => {
       if (update.assignmentId === id) {
         if (update.status === 'COMPLETED') {
           setStatus('COMPLETED');
           const token = Cookies.get('token');
-          fetch(`http://localhost:4000/api/assignments/${id}`, {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments/${id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
             .then(r => r.json())
@@ -68,7 +68,7 @@ export default function AssignmentOutputPage() {
 
     // Initial fetch
     const token = Cookies.get('token');
-    fetch(`http://localhost:4000/api/assignments/${id}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments/${id}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -165,7 +165,7 @@ export default function AssignmentOutputPage() {
     setStatus('GENERATING');
     try {
       const token = Cookies.get('token');
-      await fetch(`http://localhost:4000/api/assignments/${id}/regenerate`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments/${id}/regenerate`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

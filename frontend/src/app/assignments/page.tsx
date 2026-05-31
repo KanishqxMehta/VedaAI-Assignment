@@ -80,7 +80,7 @@ export default function AssignmentsPage() {
     if (confirm('Are you sure you want to delete this assignment?')) {
       try {
         const token = Cookies.get('token');
-        await fetch(`http://localhost:4000/api/assignments/${id}`, { 
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments/${id}`, { 
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });
