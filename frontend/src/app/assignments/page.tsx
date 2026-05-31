@@ -99,7 +99,7 @@ export default function AssignmentsPage() {
       return;
     }
 
-    fetch('http://localhost:4000/api/assignments', {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())

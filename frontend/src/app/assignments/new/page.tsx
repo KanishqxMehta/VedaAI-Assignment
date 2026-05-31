@@ -133,7 +133,7 @@ export default function NewAssignmentPage() {
     setLoading(true);
     try {
       const token = Cookies.get('token');
-      const response = await fetch('http://localhost:4000/api/assignments', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

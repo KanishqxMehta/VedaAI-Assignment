@@ -17,7 +17,7 @@ export default function Sidebar() {
     const token = Cookies.get('token');
     if (!token) return;
     
-    fetch('http://localhost:4000/api/assignments', {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
