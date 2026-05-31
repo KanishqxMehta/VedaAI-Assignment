@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const redisConnection = new IORedis(process.env.REDIS_URI || 'redis://localhost:6379', {
+export const redisConnection = new IORedis(process.env.REDIS_URI || process.env.REDIS_URL || 'redis://localhost:6379', {
     maxRetriesPerRequest: null
 });
 
