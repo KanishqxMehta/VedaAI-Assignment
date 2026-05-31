@@ -1,12 +1,10 @@
 'use client';
-
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Search, Filter, MoreVertical, Plus, Calendar } from 'lucide-react';
 import Cookies from 'js-cookie';
 import styles from './Assignments.module.css';
-
 interface Assignment {
   _id: string;
   title: string;
@@ -15,37 +13,29 @@ interface Assignment {
   createdAt: string;
   difficulty?: string;
 }
-
 export default function AssignmentsPage() {
-
   const getLocalDateString = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  
   // Pending filter states (used inside modal)
   const [filterDifficulty, setFilterDifficulty] = useState('All');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  
   // Active filter states (used for actual filtering)
   const [activeFilterDifficulty, setActiveFilterDifficulty] = useState('All');
   const [activeStartDate, setActiveStartDate] = useState('');
   const [activeEndDate, setActiveEndDate] = useState('');
-  
   const [showFilterBlob, setShowFilterBlob] = useState(false);
-  
   const [showStartCalendar, setShowStartCalendar] = useState(false);
   const [showEndCalendar, setShowEndCalendar] = useState(false);
   const [currentStartMonth, setCurrentStartMonth] = useState(new Date());
   const [currentEndMonth, setCurrentEndMonth] = useState(new Date());
-
   const filterRef = useRef<HTMLDivElement>(null);
   const startCalendarRef = useRef<HTMLDivElement>(null);
   const endCalendarRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     function handleCalendarClickOutside(event: MouseEvent) {
       if (showStartCalendar && startCalendarRef.current && !startCalendarRef.current.contains(event.target as Node)) {
@@ -58,12 +48,10 @@ export default function AssignmentsPage() {
     document.addEventListener('mousedown', handleCalendarClickOutside);
     return () => document.removeEventListener('mousedown', handleCalendarClickOutside);
   }, [showStartCalendar, showEndCalendar]);
-
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
         if (showFilterBlob) {
-          // Reset pending states to match active states when clicking outside
           setFilterDifficulty(activeFilterDifficulty);
           setStartDate(activeStartDate);
           setEndDate(activeEndDate);
@@ -76,7 +64,6 @@ export default function AssignmentsPage() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showFilterBlob, activeFilterDifficulty, activeStartDate, activeEndDate]);
-
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     if (confirm('Are you sure you want to delete this assignment?')) {
@@ -93,14 +80,12 @@ export default function AssignmentsPage() {
     }
     setOpenMenuId(null);
   };
-
   useEffect(() => {
     const token = Cookies.get('token');
     if (!token) {
       setLoading(false);
       return;
     }
-
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
@@ -119,9 +104,7 @@ export default function AssignmentsPage() {
         setLoading(false);
       });
   }, []);
-
   if (loading) return <div>Loading...</div>;
-
   if (assignments.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -130,15 +113,12 @@ export default function AssignmentsPage() {
           alt="No assignments"
           className={styles.emptyIllustration}
         />
-
         <h3>No assignments yet</h3>
-
         <p>
           Create your first assignment to start collecting and grading student
           submissions. You can set up rubrics, define marking criteria, and let AI
           assist with grading.
         </p>
-
         <Link href="/assignments/new">
           <button className="btn btn-primary">
             <Plus size={16} />
@@ -148,28 +128,21 @@ export default function AssignmentsPage() {
       </div>
     );
   }
-
   const filteredAssignments = assignments.filter(a => {
     const matchesSearch = a.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = activeFilterDifficulty === 'All' || a.difficulty === activeFilterDifficulty;
-    
-    // a.createdAt exists and might be like "2024-05-31T05:22:33Z".
-    // We only want the date part for comparison.
     let matchesStartDate = true;
     let matchesEndDate = true;
     if (activeStartDate && a.createdAt) {
       matchesStartDate = new Date(a.createdAt) >= new Date(activeStartDate);
     }
     if (activeEndDate && a.createdAt) {
-      // End date should include the end of the day, so we compare carefully
       const endD = new Date(activeEndDate);
       endD.setHours(23, 59, 59, 999);
       matchesEndDate = new Date(a.createdAt) <= endD;
     }
-    
     return matchesSearch && matchesFilter && matchesStartDate && matchesEndDate;
   });
-
   let dateText = '';
   if (activeStartDate && activeEndDate) {
     dateText = `${new Date(activeStartDate).toLocaleDateString('en-GB', {day: 'numeric', month: 'short'})} - ${new Date(activeEndDate).toLocaleDateString('en-GB', {day: 'numeric', month: 'short'})}`;
@@ -178,7 +151,6 @@ export default function AssignmentsPage() {
   } else if (activeEndDate) {
     dateText = `Until ${new Date(activeEndDate).toLocaleDateString('en-GB', {day: 'numeric', month: 'short'})}`;
   }
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -188,19 +160,16 @@ export default function AssignmentsPage() {
         </div>
         <p>Manage and track all your assignments</p>
       </div>
-
       <div className={styles.filters}>
         <div className={styles.filterContainer} ref={filterRef}>
           <div className={styles.filterBtn} onClick={() => setShowFilterBlob(!showFilterBlob)}>
             <Filter size={18} />
             <span>Filters</span>
-
             {activeFilterDifficulty !== 'All' && (
               <span className={styles.filterChip}>
                 {activeFilterDifficulty}
               </span>
             )}
-
             {dateText && (
               <span className={styles.filterChip}>
                 {dateText}
@@ -221,9 +190,7 @@ export default function AssignmentsPage() {
                 </div>
               ))}
               </div>
-
               <div className={styles.filterDivider}></div>
-
               <div className={styles.filterSectionTitle}>Date Range</div>
               <div className={styles.dateRangeContainer}>
                 <div>
@@ -238,7 +205,6 @@ export default function AssignmentsPage() {
                       className={styles.dateInput}
                     />
                     <Calendar className={styles.calendarIcon} size={18} style={{ pointerEvents: 'none' }} />
-                    
                     {showStartCalendar && (
                       <div className={styles.customCalendar}>
                         <div className={styles.calendarHeader}>
@@ -283,7 +249,6 @@ export default function AssignmentsPage() {
                       className={styles.dateInput}
                     />
                     <Calendar className={styles.calendarIcon} size={18} style={{ pointerEvents: 'none' }} />
-
                     {showEndCalendar && (
                       <div className={styles.customCalendar}>
                         <div className={styles.calendarHeader}>
@@ -317,7 +282,6 @@ export default function AssignmentsPage() {
                   </div>
                 </div>
               </div>
-
               <div className={styles.filterActions}>
                 <button 
                   onClick={() => {
@@ -361,7 +325,6 @@ export default function AssignmentsPage() {
           />
         </div>
       </div>
-
       <div className={styles.grid}>
         {filteredAssignments.map((assignment) => (
           <Link href={`/assignments/${assignment._id}`} key={assignment._id} className={styles.cardLink}>
@@ -404,7 +367,6 @@ export default function AssignmentsPage() {
           </Link>
         ))}
       </div>
-
       <div className={styles.fabContainer}>
         <Link href="/assignments/new" className={styles.newAssignmentBtn}>
           <button className={styles.fab}>

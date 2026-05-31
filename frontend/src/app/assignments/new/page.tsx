@@ -1,11 +1,9 @@
 'use client';
-
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { UploadCloud, Plus, X, Calendar, Mic } from 'lucide-react';
 import styles from './NewAssignment.module.css';
-
 interface QuestionType {
   id: string;
   type: string;
@@ -14,9 +12,7 @@ interface QuestionType {
   note?: string;
   showNote?: boolean;
 }
-
 export default function NewAssignmentPage() {
-
   const getLocalDateString = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -33,11 +29,9 @@ export default function NewAssignmentPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedImage, setUploadedImage] = useState<{ data: string, mimeType: string } | null>(null);
-  
   // Calendar state
   const [showCalendar, setShowCalendar] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-
     const calendarRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     function handleCalendarClickOutside(event: MouseEvent) {
@@ -48,27 +42,19 @@ export default function NewAssignmentPage() {
     document.addEventListener('mousedown', handleCalendarClickOutside);
     return () => document.removeEventListener('mousedown', handleCalendarClickOutside);
   }, [showCalendar]);
-
-
-  // Get today's date in YYYY-MM-DD format for the min attribute
   const today = getLocalDateString(new Date());
-
   const totalQuestions = questionTypes.reduce((acc, curr) => acc + curr.count, 0);
   const totalMarks = questionTypes.reduce((acc, curr) => acc + (curr.count * curr.marks), 0);
-
   const handleUpdateType = (id: string, field: string, value: string | number | boolean) => {
     if ((field === 'count' || field === 'marks') && (value as number) < 0) return;
     setQuestionTypes(types => types.map(t => t.id === id ? { ...t, [field]: value } : t));
   };
-
   const handleRemoveType = (id: string) => {
     setQuestionTypes(types => types.filter(t => t.id !== id));
   };
-
   const handleAddType = () => {
     setQuestionTypes([...questionTypes, { id: Date.now().toString(), type: 'Multiple Choice Questions', count: 1, marks: 1 }]);
   };
-
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -89,11 +75,8 @@ export default function NewAssignmentPage() {
       }
     }
   };
-
-  // Validation checks
   const isStep1Valid = Boolean(assignmentName && subject && classLevel && duration && difficulty);
   const isStep2Valid = questionTypes.length > 0 && totalQuestions > 0 && totalMarks > 0;
-
   const handleNextStep = () => {
     setError('');
     if (!isStep1Valid) {
@@ -102,36 +85,29 @@ export default function NewAssignmentPage() {
     }
     setStep(2);
   };
-
   const handleSubmit = async () => {
     setError('');
-    
     if (!isStep2Valid) {
       setError('Please add at least one question type with valid counts.');
       return;
     }
-    
     // Validation
     if (!dueDate) {
       setError('Please select a due date.');
       return;
     }
-    
     if (new Date(dueDate) < new Date(today)) {
       setError('Due date cannot be in the past.');
       return;
     }
-    
     if (questionTypes.length === 0) {
       setError('Please add at least one question type.');
       return;
     }
-    
     if (totalQuestions === 0 || totalMarks === 0) {
       setError('Total questions and marks must be greater than 0.');
       return;
     }
-
     setLoading(true);
     try {
       const token = Cookies.get('token');
@@ -153,11 +129,9 @@ export default function NewAssignmentPage() {
           uploadedImage
         })
       });
-      
       if (!response.ok) {
         throw new Error(`Failed to create assignment (Status: ${response.status})`);
       }
-      
       const data = await response.json();
       router.push(`/assignments/${data._id}`);
     } catch (err: unknown) {
@@ -166,7 +140,6 @@ export default function NewAssignmentPage() {
     }
     setLoading(false);
   };
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -175,19 +148,16 @@ export default function NewAssignmentPage() {
           <h2>Create Assignment</h2>
         </div>
         <p className={styles.subtitle}>Set up a new assignment for your students</p>
-
         <div className={styles.progressContainer}>
           <div className={`${styles.progressBar} ${step >= 1 ? styles.progressActive : styles.progressInactive}`}></div>
           <div className={`${styles.progressBar} ${step >= 2 ? styles.progressActive : styles.progressInactive}`}></div>
         </div>
       </div>
-
       {step === 1 && (
         <>
         <div className={styles.formCard}>
           <h3>Assignment Details</h3>
           <p className={styles.subtitle}>Basic information about your assignment</p>
-          
           <div className={`${styles.inputGroup} ${styles.marginTop24}`}>
             <label>Assignment Name <span className={styles.requiredAsterisk}>*</span></label>
             <input 
@@ -198,7 +168,6 @@ export default function NewAssignmentPage() {
               onChange={e => setAssignmentName(e.target.value)}
             />
           </div>
-
           <div className={styles.inputGroup}>
             <label>Subject <span className={styles.requiredAsterisk}>*</span></label>
             <input 
@@ -209,7 +178,6 @@ export default function NewAssignmentPage() {
               onChange={e => setSubject(e.target.value)}
             />
           </div>
-
           <div className={styles.inputGroup}>
             <label>Class/Standard <span className={styles.requiredAsterisk}>*</span></label>
             <select 
@@ -222,7 +190,6 @@ export default function NewAssignmentPage() {
               ))}
             </select>
           </div>
-
           <div className={styles.inputGroup}>
             <label>Duration <span className={styles.requiredAsterisk}>*</span></label>
             <select 
@@ -238,7 +205,6 @@ export default function NewAssignmentPage() {
               <option value="3 Hours">3 Hours</option>
             </select>
           </div>
-
           <div className={styles.inputGroup}>
             <label>Difficulty <span className={styles.requiredAsterisk}>*</span></label>
             <select 
@@ -252,14 +218,12 @@ export default function NewAssignmentPage() {
               <option value="Mixed">Mixed (Default)</option>
             </select>
           </div>
-
           {error && (
             <div className={styles.errorMessage}>
               {error}
             </div>
           )}
         </div>
-
         <div className={styles.actions}>
           <button className={styles.prevBtn} onClick={() => router.back()}>Cancel</button>
           <button 
@@ -272,13 +236,11 @@ export default function NewAssignmentPage() {
         </div>
         </>
       )}
-
       {step === 2 && (
         <>
         <div className={styles.formCard}>
           <h3>Upload Material - Selector</h3>
           <p className={styles.subtitle}>Upload base document and configure questions</p>
-
           <div className={`${styles.uploadArea} ${styles.pointerCursor}`} onClick={() => fileInputRef.current?.click()}>
             <input 
               type="file" 
@@ -304,7 +266,6 @@ export default function NewAssignmentPage() {
             )}
           </div>
           <p className={styles.uploadHelp}>Upload images of your preferred document/image</p>
-
           <div className={`${styles.inputGroup} ${styles.relative}`}>
             <label>Due Date <span className={styles.requiredAsterisk}>*</span></label>
             <div className={styles.dateInputWrapper} onClick={() => setShowCalendar(!showCalendar)}>
@@ -317,7 +278,6 @@ export default function NewAssignmentPage() {
               />
               <Calendar className={styles.calendarIcon} size={18} />
             </div>
-            
             {showCalendar && (
               <div className={styles.customCalendar} ref={calendarRef}>
                 <div className={styles.calendarHeader}>
@@ -352,7 +312,6 @@ export default function NewAssignmentPage() {
               </div>
             )}
           </div>
-
           <div className={styles.questionTypesSection}>
             <div className={styles.questionTypesHeader}>
               <label>Question Type</label>
@@ -361,7 +320,6 @@ export default function NewAssignmentPage() {
                 <span>Marks</span>
               </div>
             </div>
-
             {questionTypes.map((qt) => (
               <div key={qt.id} className={styles.questionTypeRowWrapper}>
                 <div className={styles.questionTypeRow}>
@@ -400,7 +358,6 @@ export default function NewAssignmentPage() {
                     <button onClick={() => handleUpdateType(qt.id, 'marks', qt.marks + 1)}>+</button>
                   </div>
                 </div>
-                
                 {!qt.showNote && (
                   <button 
                     className={styles.addNoteBtnText} 
@@ -409,7 +366,6 @@ export default function NewAssignmentPage() {
                     + Add Note
                   </button>
                 )}
-
                 {qt.showNote && (
                   <div className={styles.noteContainer}>
                     <div className={styles.relative}>
@@ -435,17 +391,14 @@ export default function NewAssignmentPage() {
                 )}
               </div>
             ))}
-
             <button className={styles.addTypeBtn} onClick={handleAddType}>
               <div className={styles.addIcon}><Plus size={20} /></div> Add Question Type
             </button>
           </div>
-
           <div className={styles.totals}>
             <div>Total Questions: {totalQuestions}</div>
             <div>Total Marks: {totalMarks}</div>
           </div>
-
           <div className={styles.inputGroup}>
             <label>Additional Information (For better output)</label>
             <div className={styles.textareaWrapper}>
@@ -458,14 +411,12 @@ export default function NewAssignmentPage() {
               <Mic className={styles.micIcon} size={18} />
             </div>
           </div>
-
           {error && (
             <div className={styles.errorMessage}>
               {error}
             </div>
           )}
         </div>
-
         <div className={styles.actions}>
           <button className={styles.prevBtn} onClick={() => setStep(1)}>← Previous</button>
           <button 

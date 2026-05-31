@@ -7,7 +7,6 @@
   background: #5E5E5E;
   border-radius: 32px;
 }
-
 .loadingContainer {
   display: flex;
   flex-direction: column;
@@ -16,25 +15,21 @@
   height: 60vh;
   text-align: center;
 }
-
 .errorIconContainer {
   color: #ef4444;
   margin-bottom: 16px;
 }
-
 .tryAgainBtn {
   margin-top: 24px;
   background-color: #111827 !important;
   color: white !important;
 }
-
 .scrollWrapper {
   flex: 1;
   overflow-y: auto;
   padding-bottom: 32px;
   padding-right: 12px;
 }
-
 .spinner {
   width: 48px;
   height: 48px;
@@ -44,11 +39,9 @@
   animation: spin 1s linear infinite;
   margin-bottom: 24px;
 }
-
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
 .aiBanner {
     background: #181818;
     color: white;
@@ -60,13 +53,11 @@
     gap: 16px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
-
 .aiMessage {
     font-size: 15px;
     line-height: 1.6;
     font-weight: 500;
 }
-
 .downloadBtn {
     background: white;
     color: #111827;
@@ -81,22 +72,18 @@
     cursor: pointer;
     width: fit-content;
 }
-
 .downloadBtn:hover {
     background: #f3f4f6;
 }
-
 .bannerActions {
     display: flex;
     gap: 12px;
 }
-
 .regenerateBtn {
     background-color: white;
     color: #111827;
     border: 1px solid #d1d5db;
 }
-
 .paperPreview {
     background: white;
     padding: 60px;
@@ -109,30 +96,25 @@
     width: 100%;
     font-size: 18px;
 }
-
 .paperHeader {
   text-align: center;
   margin-bottom: 32px;
 }
-
 .paperHeader h1 {
   font-size: 32px;
   font-weight: 700;
   margin: 0 0 10px 0;
 }
-
 .paperHeader h2 {
   font-size: 26px;
   font-weight: 600;
   margin: 0 0 8px 0;
 }
-
 .paperHeader h3 {
   font-size: 22px;
   font-weight: 500;
   margin: 0;
 }
-
 .paperMeta {
   display: flex;
   justify-content: space-between;
@@ -141,19 +123,16 @@
   font-weight: 600;
   font-size: 18px;
 }
-
 .compulsoryText {
   font-weight: 600;
   margin-bottom: 24px;
   font-size: 18px;
 }
-
 .instruction {
   font-style: italic;
   margin-bottom: 24px;
   text-align: left;
 }
-
 .studentInfo {
   text-align: left;
   display: flex;
@@ -163,64 +142,52 @@
   font-size: 18px;
   font-weight: 600;
 }
-
 .section {
   margin-bottom: 40px;
 }
-
 .sectionTitle {
   text-align: center;
   font-size: 18px;
   margin-bottom: 16px;
 }
-
 .sectionInstruction {
   font-weight: bold;
   margin-bottom: 16px;
 }
-
 .sectionInstruction p:last-child {
   font-style: italic;
   font-weight: normal;
 }
-
 .questionsList {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
 .questionItem {
   line-height: 1.5;
 }
-
 .endOfPaper {
     margin-top: 48px;
     font-weight: bold;
     margin-bottom: 48px;
 }
-
 .answerKeySection {
     border-top: 2px solid var(--border-color);
     padding-top: 32px;
 }
-
 .answerKeyTitle {
     font-size: 18px;
     margin-bottom: 24px;
     font-weight: bold;
 }
-
 .answerKeyList {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
-
 .answerItem {
     line-height: 1.5;
 }
-
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -233,7 +200,6 @@
     justify-content: center;
     z-index: 1000;
 }
-
 .modalContent {
     background: white;
     padding: 32px;
@@ -241,18 +207,15 @@
     max-width: 500px;
     width: 90%;
 }
-
 .modalContent h3 {
     margin-bottom: 8px;
     font-size: 20px;
 }
-
 .modalContent p {
     color: var(--text-secondary);
     margin-bottom: 24px;
     font-size: 14px;
 }
-
 .feedbackInput {
     width: 100%;
     padding: 12px;
@@ -264,13 +227,11 @@
     outline: none;
     font-family: inherit;
 }
-
 .modalActions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
 }
-
 .cancelBtn {
     padding: 10px 20px;
     border-radius: 8px;
@@ -279,7 +240,6 @@
     cursor: pointer;
     font-weight: 500;
 }
-
 .confirmBtn {
     padding: 10px 20px;
     border-radius: 8px;

@@ -1,16 +1,13 @@
 'use client';
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import Cookies from 'js-cookie';
 import { useRouter, usePathname } from 'next/navigation';
-
 interface User {
   _id: string;
   name: string;
   email: string;
   schoolName?: string;
 }
-
 interface AuthContextType {
   user: User | null;
   token: string | null;
@@ -18,16 +15,13 @@ interface AuthContextType {
   logout: () => void;
   loading: boolean;
 }
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
-
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = Cookies.get('token');
@@ -50,12 +44,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       setLoading(false);
     };
-
     initAuth();
   }, []);
-
   useEffect(() => {
-    // Route protection logic
     if (!loading) {
       if (!user && pathname !== '/login' && pathname !== '/register') {
         router.push('/login');
@@ -64,28 +55,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   }, [user, loading, pathname, router]);
-
   const login = (userData: User, newToken: string) => {
     setUser(userData);
     setToken(newToken);
-    Cookies.set('token', newToken, { expires: 30 }); // 30 days
+    Cookies.set('token', newToken, { expires: 30 }); 
     router.push('/assignments');
   };
-
   const logout = () => {
     setUser(null);
     setToken(null);
     Cookies.remove('token');
     router.push('/login');
   };
-
   return (
     <AuthContext.Provider value={{ user, token, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

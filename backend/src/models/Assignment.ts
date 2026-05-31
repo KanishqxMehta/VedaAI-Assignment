@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const AssignmentSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,5 +19,4 @@ const AssignmentSchema = new mongoose.Schema({
   generatedPaper: Object,
   createdAt: { type: Date, default: Date.now }
 });
-
 export const Assignment = mongoose.model('Assignment', AssignmentSchema);

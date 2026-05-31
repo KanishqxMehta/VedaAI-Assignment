@@ -1,7 +1,6 @@
 .container * {
   font-family: inherit;
 }
-
 .container {
   display: flex;
   flex-direction: column;
@@ -10,35 +9,29 @@
   overflow-y: auto;
   padding-right: 12px;
 }
-
 .header {
   margin-bottom: 12px;
 }
-
 .titleWrapper {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
 }
-
 .greenDot {
   width: 10px;
   height: 10px;
   background-color: #10b981;
   border-radius: 50%;
 }
-
 .header h2 {
   font-size: 20px;
   font-weight: 700;
 }
-
 .subtitle {
   font-size: 14px;
   color: var(--text-secondary);
 }
-
 .progressContainer {
   display: flex;
   gap: 8px;
@@ -46,52 +39,41 @@
   margin-bottom: 24px;
   max-width: 100%;
 }
-
 .progressBar {
   height: 4px;
   flex: 1;
   border-radius: 2px;
   transition: background-color 0.3s;
 }
-
 .progressActive {
   background-color: #111827;
 }
-
 .progressInactive {
   background-color: #e5e7eb;
 }
-
 .requiredAsterisk {
   color: red;
 }
-
 .marginTop24 {
   margin-top: 24px;
 }
-
 .pointerCursor {
   cursor: pointer;
 }
-
 .hiddenInput {
   display: none;
 }
-
 .flexColCenter {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .uploadIconSuccess {
   color: #10b981;
 }
-
 .relative {
   position: relative;
 }
-
 .cancelNoteBtn {
   position: absolute;
   top: 8px;
@@ -101,7 +83,6 @@
   cursor: pointer;
   color: #9ca3af;
 }
-
 @media (max-width: 768px) {
   .actions {
     position: sticky;
@@ -110,13 +91,10 @@
     background: var(--background);
     z-index: 10;
   }
-  
   .typeSelect select {
     max-width: 150px;
   }
 }
-
-/* Form Card */
 .formCard {
   background: #F2F2F2;
   border-radius: 28px;
@@ -124,14 +102,11 @@
   box-shadow: 0 4px 20px rgba(0,0,0,0.04);
   border: 1px solid #fff;
 }
-
 .formCard h3 {
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 4px;
 }
-
-/* Upload Area */
 .uploadArea {
   border: 2px dashed #d1d5db;
   border-radius: 16px;
@@ -146,29 +121,24 @@
   cursor: pointer;
   transition: border-color 0.2s;
 }
-
 .uploadArea:hover {
   border-color: #9ca3af;
 }
-
 .uploadIcon {
   color: var(--text-secondary);
   margin-bottom: 16px;
 }
-
 .uploadText {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 4px;
 }
-
 .uploadSubtext {
   font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: 16px;
 }
-
 .browseBtn {
   font-family: var(--font-bricolage);
   background: #F6F6F6;
@@ -180,23 +150,18 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-
 .browseBtn:hover {
   background: #F0F0F0;
 }
-
 .uploadHelp {
   font-size: 12px;
   color: var(--text-secondary);
   text-align: center;
   margin-bottom: 32px;
 }
-
-/* Input Groups */
 .inputGroup {
   margin-bottom: 24px;
 }
-
 .inputGroup label {
   display: block;
   font-size: 14px;
@@ -204,21 +169,16 @@
   margin-bottom: 8px;
   color: var(--text-primary);
 }
-
 .dateInputWrapper {
   position: relative;
 }
-
 .input {
   width: 100%;
   height: 48px;
   padding: 0 16px;
-
   border: 1px solid var(--border-color);
   border-radius: 9999px !important;
-
   background-color: white;
-
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -226,20 +186,16 @@
 .input:focus {
   border-color: #9ca3af;
 }
-
 select.input {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-
   border-radius: 9999px;
   padding-right: 48px;
-
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;
 }
-
 .calendarIcon {
   position: absolute;
   right: 16px;
@@ -247,24 +203,19 @@ select.input {
   transform: translateY(-50%);
   color: var(--text-secondary);
 }
-
-/* Question Types */
 .questionTypesSection {
   margin-bottom: 16px;
 }
-
 .questionTypesHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
-
 .questionTypesHeader label {
   font-size: 14px;
   font-weight: 700;
 }
-
 .headerLabels {
   display: flex;
   gap: 32px;
@@ -272,24 +223,20 @@ select.input {
   color: var(--text-secondary);
   font-weight: 500;
 }
-
 .questionTypeRowWrapper {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 12px;
 }
-
 .questionTypeRow {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
 .typeSelect {
   flex: 1;
 }
-
 .typeSelect select {
   height: 44px;
   width: 100%;
@@ -306,7 +253,6 @@ select.input {
   background-position: right 16px center;
   padding-right: 40px;
 }
-
 .removeBtn {
   background: none;
   border: none;
@@ -315,11 +261,9 @@ select.input {
   padding: 4px;
   transition: color 0.2s;
 }
-
 .removeBtn:hover {
   color: #ef4444;
 }
-
 .countSelect, .markSelect {
   display: flex;
   align-items: center;
@@ -329,7 +273,6 @@ select.input {
   overflow: hidden;
   min-width: 90px;
 }
-
 .countSelect button, .markSelect button {
   background: none;
   border: none;
@@ -339,11 +282,9 @@ select.input {
   font-size: 16px;
   transition: color 0.2s;
 }
-
 .countSelect button:hover, .markSelect button:hover {
   color: var(--text-primary);
 }
-
 .countSelect input, .markSelect input {
   height: 44px;
   width: 28px;
@@ -354,7 +295,6 @@ select.input {
   font-weight: 600;
   -moz-appearance: textfield;
 }
-
 .countSelect input::-webkit-outer-spin-button,
 .countSelect input::-webkit-inner-spin-button,
 .markSelect input::-webkit-outer-spin-button,
@@ -362,8 +302,6 @@ select.input {
   -webkit-appearance: none;
   margin: 0;
 }
-
-/* Note */
 .addNoteBtnText {
   align-self: flex-start;
   background: none;
@@ -374,16 +312,13 @@ select.input {
   cursor: pointer;
   padding: 0 4px;
 }
-
 .addNoteBtnText:hover {
   text-decoration: underline;
 }
-
 .noteContainer {
   margin-top: 4px;
   margin-bottom: 8px;
 }
-
 .noteTextarea {
   width: 100%;
   padding: 10px 14px;
@@ -396,12 +331,9 @@ select.input {
   background: #f9fafb;
   border: 1px dashed #d1d5db;
 }
-
 .noteTextarea:focus {
   border-color: #9ca3af;
 }
-
-/* Add Type Button */
 .addTypeBtn {
   display: flex;
   align-items: center;
@@ -414,7 +346,6 @@ select.input {
   cursor: pointer;
   margin-top: 16px;
 }
-
 .addIcon {
   background-color: #2B2B2B;
   color: white;
@@ -425,8 +356,6 @@ select.input {
   justify-content: center;
   font-size: 16px;
 }
-
-/* Totals */
 .totals {
   display: flex;
   flex-direction: column;
@@ -438,12 +367,9 @@ select.input {
   margin-bottom: 32px;
   margin-top: 12px;
 }
-
-/* Additional Info Textarea */
 .textareaWrapper {
   position: relative;
 }
-
 .textarea {
   width: 100%;
   padding: 16px;
@@ -456,25 +382,20 @@ select.input {
   outline: none;
   font-family: inherit;
 }
-
 .textarea:focus {
   border-color: #9ca3af;
 }
-
 .micIcon {
   position: absolute;
   right: 16px;
   bottom: 16px;
   color: var(--text-secondary);
 }
-
-/* Actions (Previous / Next) — outside the card */
 .actions {
   display: flex;
   justify-content: space-between;
   margin-top: 24px;
 }
-
 .prevBtn, .nextBtn {
   padding: 14px 28px;
   border-radius: 28px;
@@ -483,28 +404,22 @@ select.input {
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .prevBtn {
   background: white;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
 }
-
 .prevBtn:hover {
   background: #f9fafb;
 }
-
 .nextBtn {
   background: #111827;
   color: white;
   border: none;
 }
-
 .nextBtn:hover {
   background: #1f2937;
 }
-
-/* Error */
 .errorMessage {
   color: #ef4444;
   background-color: #fef2f2;
@@ -515,8 +430,6 @@ select.input {
   font-size: 14px;
   text-align: center;
 }
-
-/* Calendar */
 .customCalendar {
   position: absolute;
   top: 100%;
@@ -530,7 +443,6 @@ select.input {
   width: 300px;
   padding: 20px;
 }
-
 .calendarHeader {
   display: flex;
   justify-content: space-between;
@@ -539,7 +451,6 @@ select.input {
   font-weight: 600;
   font-size: 15px;
 }
-
 .calendarHeader button {
   background: none;
   border: none;
@@ -548,25 +459,21 @@ select.input {
   border-radius: 6px;
   font-size: 16px;
 }
-
 .calendarHeader button:hover {
   background: #f3f4f6;
 }
-
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
   text-align: center;
 }
-
 .calDayHeader {
   font-size: 12px;
   color: var(--text-secondary);
   font-weight: 600;
   margin-bottom: 8px;
 }
-
 .calDay {
   padding: 8px;
   border-radius: 50%;
@@ -580,28 +487,22 @@ select.input {
   margin: 0 auto;
   transition: background 0.15s;
 }
-
 .calDay:hover:not(.calDayPast) {
   background: #f3f4f6;
 }
-
 .calDayPast {
   color: #d1d5db;
   cursor: not-allowed;
 }
-
 .calDaySelected {
   background: #111827 !important;
   color: white;
 }
-
 .btnDisabled {
   opacity: 0.4;
   cursor: not-allowed !important;
   pointer-events: none;
 }
-
-/* Legacy compat (unused but safe) */
 .formContainer {
   background: white;
   border-radius: 16px;
@@ -609,7 +510,6 @@ select.input {
   max-width: 800px;
   margin: 0 auto;
 }
-
 .formContent {
   flex: 1;
 }

@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { DownloadCloud } from 'lucide-react';
@@ -8,19 +7,16 @@ import ReactMarkdown from 'react-markdown';
 import Cookies from 'js-cookie';
 import { useSettings } from '@/context/SettingsContext';
 import styles from './AssignmentOutput.module.css';
-
 interface Question {
   text: string;
   difficulty: string;
   marks: number;
 }
-
 interface Section {
   title: string;
   instruction: string;
   questions: Question[];
 }
-
 interface GeneratedPaper {
   aiMessage?: string;
   metadata?: {
@@ -32,19 +28,15 @@ interface GeneratedPaper {
   sections: Section[];
   answerKey?: string[];
 }
-
 export default function AssignmentOutputPage() {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
   const { settings } = useSettings();
-
   const [status, setStatus] = useState('GENERATING');
   const [paper, setPaper] = useState<GeneratedPaper | null>(null);
-  
   const [showRegenerateModal, setShowRegenerateModal] = useState(false);
   const [feedback, setFeedback] = useState('');
-
   useEffect(() => {
     // Setup socket to always listen for updates
     const socket = io((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'));
@@ -65,8 +57,6 @@ export default function AssignmentOutputPage() {
         }
       }
     });
-
-    // Initial fetch
     const token = Cookies.get('token');
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments/${id}`, {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -84,7 +74,6 @@ export default function AssignmentOutputPage() {
       })
       .catch(err => {
         console.error(err);
-        // Mock data fallback if backend is down
         setStatus('COMPLETED');
         setPaper({
           sections: [
@@ -107,12 +96,10 @@ export default function AssignmentOutputPage() {
           ]
         });
       });
-
     return () => {
       socket.disconnect();
     };
   }, [id]);
-
   if (status === 'GENERATING') {
     return (
       <div className={styles.loadingContainer}>
@@ -122,7 +109,6 @@ export default function AssignmentOutputPage() {
       </div>
     );
   }
-
   if (status === 'FAILED') {
     return (
       <div className={styles.loadingContainer}>
@@ -137,10 +123,8 @@ export default function AssignmentOutputPage() {
       </div>
     );
   }
-
   const totalMarks = paper?.sections.reduce((acc, section) => 
     acc + section.questions.reduce((qAcc, q) => qAcc + q.marks, 0), 0) || 0;
-
   const handleDownload = async () => {
     try {
         const html2pdf = (await import('html2pdf.js')).default;
@@ -159,7 +143,6 @@ export default function AssignmentOutputPage() {
         console.error('Failed to generate PDF', err);
     }
   };
-
   const handleRegenerate = async () => {
     setShowRegenerateModal(false);
     setStatus('GENERATING');
@@ -178,7 +161,6 @@ export default function AssignmentOutputPage() {
       setStatus('FAILED');
     }
   };
-
   return (
     <div className={styles.scrollWrapper}>
       <div className={styles.container}>
@@ -195,7 +177,6 @@ export default function AssignmentOutputPage() {
             </button>
           </div>
         </div>
-
         {showRegenerateModal && (
           <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
@@ -215,36 +196,30 @@ export default function AssignmentOutputPage() {
             </div>
           </div>
         )}
-
         <div className={styles.paperPreview} id="paper-preview">
           <div className={styles.paperHeader}>
             <h1><span>{settings.schoolName}, {settings.schoolLocation}</span></h1>
             <h2><span>Subject: {paper?.metadata?.subject || 'English'}</span></h2>
             <h3><span>Class: {paper?.metadata?.class || '5th'}</span></h3>
           </div>
-
           <div className={styles.paperMeta}>
             <div><span>Time Allowed: {paper?.metadata?.timeAllowed || '45 minutes'}</span></div>
             <div><span>Maximum Marks: {totalMarks}</span></div>
           </div>
-
           <div className={styles.compulsoryText}>
             All questions are compulsory unless stated otherwise.
           </div>
-
           <div className={styles.studentInfo}>
             <div><span>Name: ____________________</span></div>
             <div><span>Roll Number: ____________________</span></div>
             <div><span>Class: {paper?.metadata?.class || '5th'} Section: ____________________</span></div>
           </div>
-
           {paper?.sections.map((section, sIdx) => (
             <div key={sIdx} className={styles.section}>
               <h4 className={styles.sectionTitle}>{section.title}</h4>
               <div className={styles.sectionInstruction}>
                   <ReactMarkdown>{section.instruction.replace(/(?<!\n)\n(?!\n)/g, '\n\n')}</ReactMarkdown>
               </div>
-              
               <div className={styles.questionsList}>
                 {section.questions.map((q, qIdx) => (
                   <div key={qIdx} className={styles.questionItem}>
@@ -256,11 +231,9 @@ export default function AssignmentOutputPage() {
               </div>
             </div>
           ))}
-          
           <div className={styles.endOfPaper}>
               <strong>End of Question Paper</strong>
           </div>
-
           {paper?.answerKey && paper.answerKey.length > 0 && (
             <div className={styles.answerKeySection}>
               <h3 className={styles.answerKeyTitle}>Answer Key:</h3>

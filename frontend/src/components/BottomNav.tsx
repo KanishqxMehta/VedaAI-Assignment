@@ -1,19 +1,15 @@
 'use client';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './BottomNav.module.css';
-
 export default function BottomNav() {
   const pathname = usePathname();
-
   const navItems = [
     { name: 'Home', href: '/', icon: '/icons/home.svg' },
     { name: 'Assignments', href: '/assignments', icon: '/icons/file-text.svg' },
     { name: 'Library', href: '#', icon: '/icons/library.svg' },
     { name: 'AI Toolkit', href: '#', icon: '/icons/book.svg' },
   ];
-
   return (
     <nav className={styles.bottomNav}>
       {navItems.map((item) => {

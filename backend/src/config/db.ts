@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const connectDB = async () => {
   try {
     const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/vedaai';
@@ -10,5 +9,4 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
-
 export default connectDB;

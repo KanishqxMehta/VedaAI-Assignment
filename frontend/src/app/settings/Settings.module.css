@@ -32,7 +32,6 @@
 .formSubtitle {
   margin-bottom: 24px;
 }
-
 .formCard {
   background: #F2F2F2;
   border-radius: 32px;
@@ -41,7 +40,6 @@
   border: 1px solid #FFFFFF;
   width: 100%;
 }
-
 .formCard h3 {
   font-size: 18px;
   font-weight: 700;
@@ -50,7 +48,6 @@
 .inputGroup {
   margin-bottom: 24px;
 }
-
 .inputGroup label {
   display: block;
   font-size: 14px;

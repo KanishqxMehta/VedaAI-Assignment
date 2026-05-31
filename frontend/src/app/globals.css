@@ -3,36 +3,29 @@
   --sidebar-bg: #ffffff;
   --text-primary: #303030;
   --text-secondary: #5E5E5E;
-  --accent: #ff4500; /* VedaAI brand color */
-  --accent-hover: #e03e00;
+  --accent: #ff4500;   --accent-hover: #e03e00;
   --border-color: #e5e7eb;
   --card-bg: #ffffff;
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
-
 body {
   font-family: var(--font-bricolage), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-image: var(--background);
-
   color: var(--text-primary);
   display: flex;
   min-height: 100vh;
 }
-
-/* Layout */
 .app-container {
   display: flex;
   width: 100%;
   height: 100vh;
   overflow: hidden;
 }
-
 .sidebar {
   width: 344px;
   min-width: 260px;
@@ -44,7 +37,6 @@ body {
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
-
 .main-content {
   flex: 1;
   padding: 24px 32px;
@@ -52,17 +44,12 @@ body {
   flex-direction: column;
   overflow: hidden;
 }
-
-/* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
-
 h1 { font-size: 24px; }
 h2 { font-size: 20px; }
 p { font-size: 14px; color: var(--text-secondary); }
-
-/* Buttons */
 .btn {
   padding: 10px 16px;
   border-radius: 8px;
@@ -76,7 +63,6 @@ p { font-size: 14px; color: var(--text-secondary); }
   justify-content: center;
   gap: 8px;
 }
-
 .btn-primary {
   background-color: #111827;
   border-radius: 24px;
@@ -86,7 +72,6 @@ p { font-size: 14px; color: var(--text-secondary); }
 .btn-primary:hover {
   background-color: #1f2937;
 }
-
 .btn-accent {
   background-color: var(--accent);
   color: white;
@@ -94,7 +79,6 @@ p { font-size: 14px; color: var(--text-secondary); }
 .btn-accent:hover {
   background-color: var(--accent-hover);
 }
-
 .btn-outline {
   background-color: transparent;
   border: 1px solid var(--border-color);
@@ -103,8 +87,6 @@ p { font-size: 14px; color: var(--text-secondary); }
 .btn-outline:hover {
   background-color: #f9fafb;
 }
-
-/* Form Elements */
 .input {
   width: 100%;
   padding: 10px 12px;
@@ -118,8 +100,6 @@ p { font-size: 14px; color: var(--text-secondary); }
 .input:focus {
   border-color: var(--accent);
 }
-
-/* Header */
 .top-nav {
   display: flex;
   justify-content: space-between;
@@ -130,7 +110,6 @@ p { font-size: 14px; color: var(--text-secondary); }
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-
 .top-nav .breadcrumbs {
   font-size: 14px;
   color: var(--text-secondary);
@@ -138,23 +117,18 @@ p { font-size: 14px; color: var(--text-secondary); }
   align-items: center;
   gap: 8px;
 }
-
 .top-nav .user-profile {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
 @media (max-width: 768px) {
   .sidebar {
     display: none !important;
   }
-  
   .main-content {
     padding: 16px;
-    padding-bottom: 80px; /* Room for BottomNav */
-  }
-
+    padding-bottom: 80px;   }
   .app-container {
     height: 100vh;
     height: 100dvh;

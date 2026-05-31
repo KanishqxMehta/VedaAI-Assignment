@@ -4,72 +4,58 @@
   flex: 1;
   overflow: hidden;
 }
-
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   min-height: 70vh;
   gap: 16px;
-
   text-align: center;
   max-width: 520px;
   margin: 0 auto;
 }
-
 .emptyIllustration {
   width: 320px;
   display: block;
   margin: -20px auto;
 }
-
 .emptyState h3 {
   font-size: 28px;
   font-weight: 700;
 }
-
 .emptyState p {
   max-width: 480px;
   line-height: 1.6;
   color: #6b7280;
 }
-
 .searchIconWrapper {
   position: relative;
 }
-
 .header {
   margin-bottom: 24px;
   flex-shrink: 0;
 }
-
 .titleWrapper {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
 }
-
 .greenDot {
   width: 10px;
   height: 10px;
   background-color: #10b981;
   border-radius: 50%;
 }
-
 .header h2 {
   font-size: 24px;
   font-weight: 700;
 }
-
 .header p {
   color: var(--text-secondary);
   font-size: 14px;
 }
-
-/* Filters Row */
 .filters {
   display: flex;
   justify-content: space-between;
@@ -81,60 +67,44 @@
   height: 64px;
   flex-shrink: 0;
 }
-
 .filterContainer {
   position: relative;
 }
-
 .filterBtn {
   display: flex;
   align-items: center;
   gap: 10px;
-
   background: transparent;
   border: none;
-
   padding: 0;
-
   color: #A9A9A9;
   font-size: 16px;
   font-weight: 600;
-
   cursor: pointer;
 }
-
 .filterChip {
   display: flex;
   align-items: center;
-
   height: 28px;
   padding: 0 12px;
-
   background: #f3f4f6;
   border: 1px solid #e5e7eb;
-
   border-radius: 999px;
-
   font-size: 13px;
   font-weight: 600;
-
   color: #374151;
 }
-
 .filterBtn:hover {
   border-color: #dcdcdc;
 }
-
 .filterBtnActive {
   border-color: #111827;
 }
-
 .searchBox {
   position: relative;
   margin-left: 40px;
   width: 380px;
 }
-
 .searchIcon {
   position: absolute;
   left: 14px;
@@ -142,7 +112,6 @@
   transform: translateY(-50%);
   color: #9ca3af;
 }
-
 .searchInput {
   width: 100%;
   height: 44px;
@@ -154,12 +123,9 @@
   background: white;
   transition: border-color 0.2s;
 }
-
 .searchInput:focus {
   border-color: #9ca3af;
 }
-
-/* --- Filter Blob (water / metaball effect) --- */
 .filterBlob {
   position: absolute;
   top: calc(100% + 6px);
@@ -174,12 +140,8 @@
   z-index: 50;
   border: 1px solid var(--border-color);
   min-width: 160px;
-  /* Water-blob animation: starts as a tiny circle attached to the button,
-     inflates outward like a droplet separating. */
-  animation: smoothWaterBlob 0.4s ease-in-out forwards;
-  transform-origin: 40px -6px; /* originate from near the "Filter" icon */
-}
-
+    animation: smoothWaterBlob 0.4s ease-in-out forwards;
+  transform-origin: 40px -6px; }
 @keyframes smoothWaterBlob {
   0% {
     transform: scaleY(0.2) scaleX(0.5) translateY(-20px);
@@ -200,7 +162,6 @@
     filter: blur(0px);
   }
 }
-
 .filterOption {
   padding: 10px 16px;
   border-radius: 10px;
@@ -210,11 +171,9 @@
   font-weight: 500;
   color: var(--text-primary);
 }
-
 .filterOption:hover {
   background: #f3f4f6;
 }
-
 .filterOptionActive {
   background: #111827;
   color: white;
@@ -222,8 +181,6 @@
 .filterOptionActive:hover {
   background: #1f2937;
 }
-
-/* Grid */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -231,9 +188,7 @@
   flex: 1;
   overflow-y: auto;
   padding-bottom: 80px;
-  padding-right: 12px; /* for scrollbar */
-}
-
+  padding-right: 12px; }
 .card {
   background: white;
   border-radius: 14px;
@@ -245,18 +200,15 @@
   flex-direction: column;
   justify-content: space-between;
 }
-
 .card:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }
-
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .cardHeader h3 {
   font-size: 24px;
   font-weight: 700;
@@ -266,8 +218,6 @@
   text-overflow: ellipsis;
   max-width: 240px;
 }
-
-/* Difficulty Pill */
 .difficultyPill {
   font-size: 11px;
   font-weight: 600;
@@ -275,27 +225,22 @@
   border-radius: 12px;
   display: inline-block;
 }
-
 .diffEasy {
   background-color: #d1fae5;
   color: #059669;
 }
-
 .diffMedium {
   background-color: #fef3c7;
   color: #d97706;
 }
-
 .diffHard {
   background-color: #fee2e2;
   color: #dc2626;
 }
-
 .diffMixed {
   background-color: #f3f4f6;
   color: #4b5563;
 }
-
 .moreBtn {
   background: none;
   border: none;
@@ -305,11 +250,9 @@
   border-radius: 50%;
   transition: background 0.2s;
 }
-
 .moreBtn:hover {
   background-color: #f3f4f6;
 }
-
 .dropdownMenu {
   position: absolute;
   top: 30px;
@@ -322,30 +265,25 @@
   min-width: 160px;
   overflow: hidden;
 }
-
 .dropdownItem {
   padding: 12px 16px;
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.15s;
 }
-
 .dropdownItem:hover {
   background-color: #f9fafb;
 }
-
 .cardFooter {
   display: flex;
   justify-content: space-between;
   font-size: 16px;
   color: var(--text-secondary);
 }
-
 .cardFooter span {
   color: var(--text-primary);
   font-weight: 700;
 }
-
 .fabContainer {
   position: fixed;
   bottom: 16px;
@@ -353,7 +291,6 @@
   transform: translateX(-50%);
   z-index: 10;
 }
-
 .fab {
   background: #181818;
   color: white;
@@ -369,14 +306,11 @@
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   transition: transform 0.2s, box-shadow 0.2s;
 }
-
 .fab:hover {
   background: #1f2937;
   transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(0,0,0,0.3);
 }
-
-/* Calendar */
 .customCalendar {
   position: absolute;
   top: 100%;
@@ -390,7 +324,6 @@
   width: 300px;
   padding: 20px;
 }
-
 .calendarHeader {
   display: flex;
   justify-content: space-between;
@@ -399,7 +332,6 @@
   font-weight: 600;
   font-size: 15px;
 }
-
 .calendarHeader button {
   background: none;
   border: none;
@@ -408,25 +340,21 @@
   border-radius: 6px;
   font-size: 16px;
 }
-
 .calendarHeader button:hover {
   background: #f3f4f6;
 }
-
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
   text-align: center;
 }
-
 .calDayHeader {
   font-size: 12px;
   color: var(--text-secondary);
   font-weight: 600;
   margin-bottom: 8px;
 }
-
 .calDay {
   padding: 8px;
   border-radius: 50%;
@@ -440,25 +368,20 @@
   margin: 0 auto;
   transition: background 0.15s;
 }
-
 .calDay:hover:not(.calDayPast) {
   background: #f3f4f6;
 }
-
 .calDayPast {
   color: #d1d5db;
   cursor: not-allowed;
 }
-
 .calDaySelected {
   background: #111827 !important;
   color: white;
 }
-
 .dateInputWrapper {
   position: relative;
 }
-
 .calendarIcon {
   position: absolute;
   right: 16px;
@@ -466,30 +389,24 @@
   transform: translateY(-50%);
   color: var(--text-secondary);
 }
-
 .cardLink {
   text-decoration: none;
   color: inherit;
 }
-
 .relative {
   position: relative;
 }
-
 .cardHeaderFlex {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
 .dropdownItemRed {
   color: red;
 }
-
 .newAssignmentBtn {
   text-decoration: none;
 }
-
 .filterBlobContainer {
   width: 300px;
   padding: 24px;
@@ -498,20 +415,17 @@
   border: 1px solid #f3f4f6;
   background: white;
 }
-
 .filterSectionTitle {
   margin-bottom: 12px;
   font-weight: 600;
   font-size: 14px;
 }
-
 .filterChipsContainer {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 16px;
 }
-
 .levelChip {
   padding: 6px 12px;
   border-radius: 20px;
@@ -523,24 +437,20 @@
   font-weight: 500;
   transition: all 0.2s;
 }
-
 .levelChipActive {
   background: #111827;
   color: white;
 }
-
 .filterDivider {
   height: 1px;
   background: #e5e7eb;
   margin: 20px 0;
 }
-
 .dateRangeContainer {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .dateLabel {
   font-size: 13px;
   color: #4b5563;
@@ -548,7 +458,6 @@
   margin-bottom: 6px;
   font-weight: 500;
 }
-
 .dateInput {
   width: 100%;
   padding: 12px 14px;
@@ -561,14 +470,12 @@
   background: #f9fafb;
   cursor: pointer;
 }
-
 .filterActions {
   display: flex;
   justify-content: space-between;
   margin-top: 28px;
   align-items: center;
 }
-
 .clearAllBtn {
   background: none;
   border: none;
@@ -580,11 +487,9 @@
   border-radius: 8px;
   transition: background 0.2s;
 }
-
 .clearAllBtn:hover {
   background: #fef2f2;
 }
-
 .applyBtn {
   background: #111827;
   color: white;
@@ -595,7 +500,6 @@
   font-weight: 500;
   cursor: pointer;
 }
-
 @media (max-width: 768px) {
   .filters {
     flex-direction: row;
@@ -613,8 +517,7 @@
   }
   .fabContainer {
     right: 20px;
-    bottom: 96px; /* Above BottomNav */
-  }
+    bottom: 96px;   }
   .fab {
     width: 56px;
     height: 56px;
