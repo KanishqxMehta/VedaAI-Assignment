@@ -17,6 +17,8 @@ interface Assignment {
 }
 
 export default function AssignmentsPage() {
+
+  const getLocalDateString = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -249,7 +251,7 @@ export default function AssignmentsPage() {
                           {Array.from({ length: new Date(currentStartMonth.getFullYear(), currentStartMonth.getMonth(), 1).getDay() }).map((_, i) => <div key={`empty-start-${i}`} />)}
                           {Array.from({ length: new Date(currentStartMonth.getFullYear(), currentStartMonth.getMonth() + 1, 0).getDate() }).map((_, i) => {
                             const day = i + 1;
-                            const dateStr = new Date(currentStartMonth.getFullYear(), currentStartMonth.getMonth(), day).toISOString().split('T')[0];
+                            const dateStr = getLocalDateString(new Date(currentStartMonth.getFullYear(), currentStartMonth.getMonth(), day));
                             return (
                               <div 
                                 key={day} 
@@ -294,7 +296,7 @@ export default function AssignmentsPage() {
                           {Array.from({ length: new Date(currentEndMonth.getFullYear(), currentEndMonth.getMonth(), 1).getDay() }).map((_, i) => <div key={`empty-end-${i}`} />)}
                           {Array.from({ length: new Date(currentEndMonth.getFullYear(), currentEndMonth.getMonth() + 1, 0).getDate() }).map((_, i) => {
                             const day = i + 1;
-                            const dateStr = new Date(currentEndMonth.getFullYear(), currentEndMonth.getMonth(), day).toISOString().split('T')[0];
+                            const dateStr = getLocalDateString(new Date(currentEndMonth.getFullYear(), currentEndMonth.getMonth(), day));
                             return (
                               <div 
                                 key={day} 

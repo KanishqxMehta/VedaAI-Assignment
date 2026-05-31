@@ -16,6 +16,8 @@ interface QuestionType {
 }
 
 export default function NewAssignmentPage() {
+
+  const getLocalDateString = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [assignmentName, setAssignmentName] = useState('');
@@ -49,7 +51,7 @@ export default function NewAssignmentPage() {
 
 
   // Get today's date in YYYY-MM-DD format for the min attribute
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateString(new Date());
 
   const totalQuestions = questionTypes.reduce((acc, curr) => acc + curr.count, 0);
   const totalMarks = questionTypes.reduce((acc, curr) => acc + (curr.count * curr.marks), 0);
@@ -328,7 +330,7 @@ export default function NewAssignmentPage() {
                   {Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay() }).map((_, i) => <div key={`empty-${i}`} />)}
                   {Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate() }).map((_, i) => {
                     const day = i + 1;
-                    const dateStr = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day).toISOString().split('T')[0];
+                    const dateStr = getLocalDateString(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day));
                     const isPast = new Date(dateStr) < new Date(today);
                     return (
                       <div 
