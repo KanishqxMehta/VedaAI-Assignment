@@ -249,3 +249,100 @@
     cursor: pointer;
     font-weight: 500;
 }
+
+.questionItemEditable {
+  cursor: pointer;
+  position: relative;
+  padding: 14px 20px;
+  padding-right: 52px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  border-left: 0px solid transparent;
+  transition: 
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    border-left-width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-left-color 0.25s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    padding-left 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.questionItemEditable::after {
+  content: '✎  Edit';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%) translateX(8px);
+  opacity: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: white;
+  background: #111827;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  transition: 
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.questionItemEditable:hover {
+  background-color: #fafafa;
+  border-color: #e5e7eb;
+  border-left: 3px solid #111827;
+  padding-left: 24px;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.04);
+  z-index: 10;
+}
+.questionItemEditable:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+.questionItemEditable:active {
+  transform: scale(0.995);
+  background-color: #f3f4f6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.skeletonLoader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+.skeletonLine {
+  height: 12px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  width: 100%;
+}
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+.modalTabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+.modalTabs button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.modalTabs button.activeTab {
+  color: #111827;
+  font-weight: 600;
+  border-bottom: 2px solid #111827;
+}

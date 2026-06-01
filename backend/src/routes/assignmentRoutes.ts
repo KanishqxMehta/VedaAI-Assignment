@@ -5,7 +5,9 @@ import {
     getAssignments, 
     getAssignmentById, 
     deleteAssignment, 
-    regenerateAssignment 
+    regenerateAssignment,
+    regenerateQuestion,
+    updateQuestionManual
 } from '../controllers/assignmentController';
 const router = Router();
 router.use(protect);
@@ -16,4 +18,6 @@ router.route('/:id')
     .get(getAssignmentById)
     .delete(deleteAssignment);
 router.post('/:id/regenerate', regenerateAssignment);
+router.post('/:id/questions/:questionId/regenerate', regenerateQuestion);
+router.put('/:id/questions/:questionId', updateQuestionManual);
 export default router;

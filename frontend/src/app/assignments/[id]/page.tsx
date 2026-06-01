@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { DownloadCloud } from 'lucide-react';
 import { io } from 'socket.io-client';
@@ -8,9 +8,11 @@ import Cookies from 'js-cookie';
 import { useSettings } from '@/context/SettingsContext';
 import styles from './AssignmentOutput.module.css';
 interface Question {
+  id?: string;
   text: string;
   difficulty: string;
   marks: number;
+  answerText?: string;
 }
 interface Section {
   title: string;
@@ -37,9 +39,87 @@ export default function AssignmentOutputPage() {
   const [paper, setPaper] = useState<GeneratedPaper | null>(null);
   const [showRegenerateModal, setShowRegenerateModal] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
+  const [questionModalTab, setQuestionModalTab] = useState<'ai' | 'manual'>('ai');
+  const [questionFeedback, setQuestionFeedback] = useState('');
+  const [manualQuestionText, setManualQuestionText] = useState('');
+  const [regeneratingQuestions, setRegeneratingQuestions] = useState<Record<string, boolean>>({});
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [anchorPos, setAnchorPos] = useState<{x: number, y: number} | null>(null);
+  const hoveredElRef = useRef<HTMLElement | null>(null);
+  const rafRef = useRef<number>(0);
+
+  const recalcAnchor = useCallback(() => {
+    if (hoveredElRef.current) {
+      const rect = hoveredElRef.current.getBoundingClientRect();
+      setAnchorPos({ x: rect.left + 12, y: rect.top + rect.height / 2 });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isEditMode) {
+      setAnchorPos(null);
+      hoveredElRef.current = null;
+      return;
+    }
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+      recalcAnchor();
+    };
+    const handleScroll = () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(recalcAnchor);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll, true);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll, true);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [isEditMode, recalcAnchor]);
+
   useEffect(() => {
     // Setup socket to always listen for updates
+    const ensureIds = (p: GeneratedPaper | null) => {
+      if (!p || !p.sections) return p;
+      p.sections.forEach((s: Section, sIdx: number) => {
+        if (s.questions) {
+          s.questions.forEach((q: Question, qIdx: number) => {
+            if (!q.id) q.id = `q_${sIdx}_${qIdx}`;
+          });
+        }
+      });
+      return p;
+    };
+
     const socket = io((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'));
+    socket.on('questionUpdated', (data) => {
+      if (data.assignmentId === id) {
+        setPaper((prev: GeneratedPaper | null) => {
+          if (!prev) return prev;
+          const newPaper = { ...prev };
+          for (const sec of newPaper.sections) {
+            if (!sec.questions) continue;
+            const qIdx = sec.questions.findIndex((q: Question) => q.id === data.questionId);
+            if (qIdx !== -1) {
+              sec.questions[qIdx] = data.newQuestion;
+              break;
+            }
+          }
+          return newPaper;
+        });
+        setRegeneratingQuestions(prev => ({ ...prev, [data.questionId]: false }));
+      }
+    });
+
+    socket.on('questionUpdateFailed', (data) => {
+      if (data.assignmentId === id) {
+        setRegeneratingQuestions(prev => ({ ...prev, [data.questionId]: false }));
+        alert("Failed to regenerate question. Please try again.");
+      }
+    });
     socket.on('assignmentUpdate', (update) => {
       if (update.assignmentId === id) {
         if (update.status === 'COMPLETED') {
@@ -50,7 +130,7 @@ export default function AssignmentOutputPage() {
           })
             .then(r => r.json())
             .then(d => {
-              if (d.generatedPaper) setPaper(d.generatedPaper);
+              if (d.generatedPaper) setPaper(ensureIds(d.generatedPaper));
             });
         } else if (update.status === 'FAILED') {
           setStatus('FAILED');
@@ -65,7 +145,7 @@ export default function AssignmentOutputPage() {
       .then(data => {
         if (data.status === 'COMPLETED') {
           setStatus('COMPLETED');
-          if (data.generatedPaper) setPaper(data.generatedPaper);
+          if (data.generatedPaper) setPaper(ensureIds(data.generatedPaper));
         } else if (data.status === 'FAILED') {
           setStatus('FAILED');
         } else {
@@ -75,7 +155,7 @@ export default function AssignmentOutputPage() {
       .catch(err => {
         console.error(err);
         setStatus('COMPLETED');
-        setPaper({
+        setPaper(ensureIds({
           sections: [
             {
               title: 'Section A',
@@ -94,7 +174,7 @@ export default function AssignmentOutputPage() {
               ]
             }
           ]
-        });
+        }));
       });
     return () => {
       socket.disconnect();
@@ -143,6 +223,56 @@ export default function AssignmentOutputPage() {
         console.error('Failed to generate PDF', err);
     }
   };
+  const handleRegenerateQuestion = async (action: 'regenerate' | 'enhance' = 'regenerate') => {
+    if (!selectedQuestion) return;
+    const qId = selectedQuestion.id || '';
+    setSelectedQuestion(null);
+    setRegeneratingQuestions(prev => ({ ...prev, [qId]: true }));
+    
+    try {
+      const token = Cookies.get('token');
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments/${id}/questions/${qId}/regenerate`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ feedback: action === 'enhance' ? manualQuestionText : questionFeedback, action })
+      });
+    } catch (err) {
+      console.error(err);
+      setRegeneratingQuestions(prev => ({ ...prev, [qId]: false }));
+    }
+  };
+
+  const handleManualSave = async () => {
+    if (!selectedQuestion) return;
+    const qId = selectedQuestion.id || '';
+    const updatedQ = { ...selectedQuestion, text: manualQuestionText };
+    setSelectedQuestion(null);
+    setRegeneratingQuestions(prev => ({ ...prev, [qId]: true }));
+    
+    try {
+      const token = Cookies.get('token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/assignments/${id}/questions/${qId}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ question: updatedQ })
+      });
+      const data = await res.json();
+      if (data.success) {
+         setPaper(data.generatedPaper);
+      }
+      setRegeneratingQuestions(prev => ({ ...prev, [qId]: false }));
+    } catch (err) {
+      console.error(err);
+      setRegeneratingQuestions(prev => ({ ...prev, [qId]: false }));
+    }
+  };
+
   const handleRegenerate = async () => {
     setShowRegenerateModal(false);
     setStatus('GENERATING');
@@ -169,14 +299,62 @@ export default function AssignmentOutputPage() {
             <span>{paper?.aiMessage || "Certainly! Here is the customized Question Paper based on your instructions:"}</span>
           </div>
           <div className={styles.bannerActions}>
+            <button className={`${styles.downloadBtn} ${styles.regenerateBtn}`} onClick={() => setIsEditMode(!isEditMode)}>
+              {isEditMode ? 'Exit Edit Mode' : 'Edit Paper'}
+            </button>
             <button className={`${styles.downloadBtn} ${styles.regenerateBtn}`} onClick={() => setShowRegenerateModal(true)}>
-              Regenerate
+              Regenerate All
             </button>
             <button className={styles.downloadBtn} onClick={handleDownload}>
               <DownloadCloud size={16} /> Download as PDF
             </button>
           </div>
         </div>
+        {selectedQuestion && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalTabs}>
+                <button className={questionModalTab === 'ai' ? styles.activeTab : ''} onClick={() => setQuestionModalTab('ai')}>AI Edit</button>
+                <button className={questionModalTab === 'manual' ? styles.activeTab : ''} onClick={() => setQuestionModalTab('manual')}>Manual Edit</button>
+              </div>
+              
+              {questionModalTab === 'ai' ? (
+                <>
+                  <h3>Regenerate Question</h3>
+                  <p>Tell the AI how to improve this specific question.</p>
+                  <textarea 
+                    value={questionFeedback}
+                    onChange={(e) => setQuestionFeedback(e.target.value)}
+                    placeholder="e.g. Make it a multiple choice question..."
+                    className={styles.feedbackInput}
+                    rows={4}
+                  />
+                  <div className={styles.modalActions}>
+                    <button onClick={() => setSelectedQuestion(null)} className={styles.cancelBtn}>Cancel</button>
+                    <button onClick={() => handleRegenerateQuestion('regenerate')} className={styles.confirmBtn}>Generate</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3>Manual Edit</h3>
+                  <p>Directly edit the text of the question.</p>
+                  <textarea 
+                    value={manualQuestionText}
+                    onChange={(e) => setManualQuestionText(e.target.value)}
+                    className={styles.feedbackInput}
+                    rows={4}
+                  />
+                  <div className={styles.modalActions}>
+                    <button onClick={() => setSelectedQuestion(null)} className={styles.cancelBtn}>Cancel</button>
+                    <button onClick={() => handleRegenerateQuestion('enhance')} className={styles.cancelBtn}>Enhance with AI</button>
+                    <button onClick={handleManualSave} className={styles.confirmBtn}>Save Directly</button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+        
         {showRegenerateModal && (
           <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
@@ -221,33 +399,99 @@ export default function AssignmentOutputPage() {
                   <ReactMarkdown>{section.instruction.replace(/(?<!\n)\n(?!\n)/g, '\n\n')}</ReactMarkdown>
               </div>
               <div className={styles.questionsList}>
-                {section.questions.map((q, qIdx) => (
-                  <div key={qIdx} className={styles.questionItem}>
-                    <div className={styles.questionText}>
-                      <ReactMarkdown>{`${qIdx + 1}. **[${q.difficulty}]** ${q.text.replace(/(?<!\n)\n(?!\n)/g, '\n\n')} *[${q.marks} Marks]*`}</ReactMarkdown>
+                {section.questions.map((q: Question, qIdx: number) => {
+                  const isRegenerating = q.id ? regeneratingQuestions[q.id] : false;
+                  return (
+                    <div 
+                      key={q.id || qIdx} 
+                      className={`${styles.questionItem} ${isEditMode ? styles.questionItemEditable : ''}`}
+                      onMouseEnter={(e) => {
+                        if (isEditMode && !isRegenerating) {
+                          hoveredElRef.current = e.currentTarget;
+                          recalcAnchor();
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (isEditMode) {
+                          hoveredElRef.current = null;
+                          setAnchorPos(null);
+                        }
+                      }}
+                      onClick={() => {
+                        if (isEditMode && !isRegenerating) {
+                          setSelectedQuestion(q);
+                          setQuestionFeedback('');
+                          setManualQuestionText(q.text);
+                        }
+                      }}
+                    >
+                      {isRegenerating ? (
+                        <div className={styles.skeletonLoader}>
+                          <div className={styles.skeletonLine}></div>
+                          <div className={styles.skeletonLine} style={{ width: '80%' }}></div>
+                          <div className={styles.skeletonLine} style={{ width: '60%' }}></div>
+                        </div>
+                      ) : (() => {
+                        const lines = q.text.split('\n');
+                        let firstLine = lines[0] || '';
+                        firstLine = firstLine.replace(/^\**\d+\.\**\s*/, '');
+                        const newText = `${qIdx + 1}. **[${q.difficulty}]** ${firstLine} *[${q.marks} Marks]*\n${lines.slice(1).join('\n')}`;
+                        return (
+                          <div className={styles.questionText}>
+                            <ReactMarkdown>{newText.replace(/(?<!\n)\n(?!\n)/g, '\n\n')}</ReactMarkdown>
+                          </div>
+                        );
+                      })()}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
+
               </div>
             </div>
           ))}
           <div className={styles.endOfPaper}>
               <strong>End of Question Paper</strong>
           </div>
-          {paper?.answerKey && paper.answerKey.length > 0 && (
+          {((paper?.answerKey && paper.answerKey.length > 0) || (paper?.sections.some(s => s.questions.some(q => q.answerText)))) && (
             <div className={styles.answerKeySection}>
               <h3 className={styles.answerKeyTitle}>Answer Key:</h3>
               <div className={styles.answerKeyList}>
-                {paper.answerKey.map((ans, aIdx) => (
-                  <div key={aIdx} className={styles.answerItem}>
-                    <ReactMarkdown>{ans.replace(/(?<!\n)\n(?!\n)/g, '\n\n')}</ReactMarkdown>
-                  </div>
-                ))}
+                {paper.sections.flatMap(s => s.questions).map((q: Question, absoluteIdx: number) => {
+                  const ansText = q.answerText || (paper.answerKey ? paper.answerKey[absoluteIdx] : null);
+                  if (!ansText) return null;
+                  const cleanAns = ansText.replace(/^\**\d+\.\**\s*/, '');
+                  return (
+                    <div key={q.id || absoluteIdx} className={styles.answerItem}>
+                      <ReactMarkdown>{`**${absoluteIdx + 1}.** ${cleanAns}`}</ReactMarkdown>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
         </div>
       </div>
+      {isEditMode && anchorPos && (
+        <svg style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 9999 }}>
+          <defs>
+            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#111827" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#111827" stopOpacity="0.15" />
+            </linearGradient>
+          </defs>
+          <path
+            d={`M ${anchorPos.x} ${anchorPos.y} C ${anchorPos.x + (mousePos.x - anchorPos.x) * 0.4} ${anchorPos.y}, ${mousePos.x - (mousePos.x - anchorPos.x) * 0.4} ${mousePos.y}, ${mousePos.x} ${mousePos.y}`}
+            fill="none"
+            stroke="url(#lineGrad)"
+            strokeWidth="1.5"
+            strokeDasharray="5,4"
+          />
+          <circle cx={anchorPos.x} cy={anchorPos.y} r="3" fill="#111827" fillOpacity="0.5" />
+          <circle cx={mousePos.x} cy={mousePos.y} r="8" fill="none" stroke="#111827" strokeWidth="1" strokeOpacity="0.2" />
+          <circle cx={mousePos.x} cy={mousePos.y} r="3" fill="none" stroke="#111827" strokeWidth="1.5" strokeOpacity="0.4" />
+          <circle cx={mousePos.x} cy={mousePos.y} r="1.5" fill="#111827" fillOpacity="0.6" />
+        </svg>
+      )}
     </div>
   );
 }

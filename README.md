@@ -37,8 +37,12 @@ My approach prioritized **User Experience (UX)** and **System Resilience**.
 ## Bonus Features Implemented
 
 - **PDF Export:** Integrated `html2pdf.js` on the frontend. The user can click "Download as PDF" to save the beautifully formatted, exam-style question paper natively to their device.
-- **Regeneration Action Bar:** Built a "Regenerate" flow that allows the user to provide specific feedback (e.g. "Make Section A harder") and immediately trigger a new AI generation cycle over WebSockets.
-- **UI Polish:** Added safe-area insets for mobile layouts, completely custom floating navigation bars, hover transitions, and active-state styling.
+- **Interactive Per-Question Edit Mode (LATEST UPDATE):** Implemented a state-of-the-art interactive editor allowing users to modify individual questions.
+  - *Dynamic UI/UX:* Features a modern dark-themed hover aesthetic. As users hover over questions, an SVG connector line elegantly tracks and anchors to the cursor in real-time, even during scrolling, utilizing `requestAnimationFrame` for buttery smooth 60fps tracking. 
+  - *Dual Editing Modes:* Clicking a question opens a modal offering both manual text editing and an AI-driven "Enhance with AI" / "Regenerate" flow that updates the specific question in the database.
+  - *Live Feedback:* Displays a 3-tier pulsing skeleton loader on the specific question while the background AI worker regenerates it, updating seamlessly over WebSockets.
+- **Global Regeneration:** Built a "Regenerate" flow that allows the user to provide specific feedback (e.g. "Make Section A harder") and immediately trigger a new AI generation cycle over WebSockets for the entire paper.
+- **UI Polish:** Added safe-area insets for mobile layouts, completely custom floating navigation bars, hover transitions, active-state styling, and grid-level skeleton loading states.
 - **Caching & Queues:** Completely functional BullMQ & Redis implementation for robust retry mechanisms on AI failure.
 - **Code Cleanliness:** Stripped all comments for clean, production-ready code submission.
 

@@ -17,6 +17,7 @@ const AssignmentSchema = new mongoose.Schema({
   status: { type: String, enum: ['PENDING', 'GENERATING', 'COMPLETED', 'FAILED'], default: 'PENDING' },
   questionsConfig: Array,
   generatedPaper: Object,
+  isLocked: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
 export const Assignment = mongoose.model('Assignment', AssignmentSchema);

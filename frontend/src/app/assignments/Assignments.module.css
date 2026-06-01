@@ -324,6 +324,12 @@
   width: 300px;
   padding: 20px;
 }
+.calendarUp {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
 .calendarHeader {
   display: flex;
   justify-content: space-between;
@@ -499,6 +505,30 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+}
+
+.skeletonCard {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeletonTitle {
+  width: 60%;
+  height: 24px;
+  background-color: #e5e7eb;
+  border-radius: 6px;
+}
+
+.skeletonText {
+  width: 40%;
+  height: 16px;
+  background-color: #f3f4f6;
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 @media (max-width: 768px) {
   .filters {

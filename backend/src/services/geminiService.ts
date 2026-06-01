@@ -3,15 +3,76 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { redisConnection } from '../config/redis';
 import { Assignment } from '../models/Assignment';
 export const generationQueue = new Queue('generationQueue', { connection: redisConnection });
+
 export const startGeminiWorker = (io: any) => {
   const worker = new Worker('generationQueue', async job => {
-    const { assignmentId } = job.data;
-    console.log(`Processing job for assignment: ${assignmentId}`);
+    const { assignmentId, questionId, feedback, action } = job.data;
+    console.log(`Processing ${job.name} for assignment: ${assignmentId}`);
     const assignment = await Assignment.findById(assignmentId);
     if (!assignment) return { success: false, error: 'Not found' };
+    
     try {
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash', generationConfig: { responseMimeType: "application/json" } });
+      
+      if (job.name === 'regenerate_question') {
+          // Find the existing question
+          let existingQuestion = null;
+          let sectionIndex = -1;
+          let questionIndex = -1;
+          
+          const paper = assignment.generatedPaper;
+          if (paper && paper.sections) {
+              for (let i = 0; i < paper.sections.length; i++) {
+                  const sec = paper.sections[i];
+                  if (!sec.questions) continue;
+                  const qIdx = sec.questions.findIndex((q: any, idx: number) => {
+                      const id = q.id || `q_${i}_${idx}`;
+                      return id === questionId;
+                  });
+                  if (qIdx !== -1) {
+                      existingQuestion = sec.questions[qIdx];
+                      sectionIndex = i;
+                      questionIndex = qIdx;
+                      break;
+                  }
+              }
+          }
+          
+          if (!existingQuestion) throw new Error("Question not found");
+          
+          if (!existingQuestion.id) {
+              existingQuestion.id = questionId;
+          }
+          
+          const prompt = `You are an expert teacher. The user wants to ${action === 'enhance' ? 'enhance the grammar and structure of' : 'regenerate'} a specific question in their exam paper.
+          
+          Existing Question: ${JSON.stringify(existingQuestion)}
+          User Feedback / Request: ${feedback || 'Improve this question'}
+          
+          Output a new JSON object STRICTLY containing the new question in the exact same schema.
+          Schema:
+          {
+             "id": "${existingQuestion.id}",
+             "text": "New question text",
+             "difficulty": "Easy" | "Moderate" | "Challenging",
+             "marks": ${existingQuestion.marks},
+             "answerText": "New detailed answer"
+          }`;
+          
+          const result = await model.generateContent([prompt]);
+          const newQuestion = JSON.parse(result.response.text());
+          
+          paper.sections[sectionIndex].questions[questionIndex] = newQuestion;
+          
+          assignment.markModified('generatedPaper');
+          await assignment.save();
+          
+          io.emit('questionUpdated', { assignmentId, questionId, newQuestion });
+          return { success: true };
+      }
+
+      // Existing whole paper logic
       const prompt = `You are an expert teacher. Create a question paper based on the following config.
       Title: ${assignment.title}
       Subject: ${assignment.subject || 'General'}
@@ -39,13 +100,9 @@ export const startGeminiWorker = (io: any) => {
             "title": "Section Title (e.g., Section A: Multiple Choice)",
             "instruction": "Instructions for this section",
             "questions": [
-              { "text": "Question text", "difficulty": "Easy" | "Moderate" | "Challenging", "marks": <number> }
+              { "id": "q_1", "text": "Question text", "difficulty": "Easy" | "Moderate" | "Challenging", "marks": 2, "answerText": "Detailed answer for this question" }
             ]
           }
-        ],
-        "answerKey": [
-          "1. First answer text here...",
-          "2. Second answer text here..."
         ]
       }`;
       let parts: any[] = [prompt];
@@ -68,11 +125,16 @@ export const startGeminiWorker = (io: any) => {
       return { success: true };
     } catch (error) {
       console.error("Gemini Error:", error);
-      await Assignment.findByIdAndUpdate(assignmentId, { status: 'FAILED' });
-      io.emit('assignmentUpdate', { assignmentId, status: 'FAILED' });
+      if (job.name === 'regenerate_question') {
+          io.emit('questionUpdateFailed', { assignmentId, questionId: job.data.questionId });
+      } else {
+          await Assignment.findByIdAndUpdate(assignmentId, { status: 'FAILED' });
+          io.emit('assignmentUpdate', { assignmentId, status: 'FAILED' });
+      }
       return { success: false, error };
     }
   }, { connection: redisConnection });
+
   worker.on('error', err => {
       console.error('Worker error:', err);
   });

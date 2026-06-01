@@ -104,8 +104,7 @@ export default function AssignmentsPage() {
         setLoading(false);
       });
   }, []);
-  if (loading) return <div>Loading...</div>;
-  if (assignments.length === 0) {
+  if (!loading && assignments.length === 0) {
     return (
       <div className={styles.emptyState}>
         <img
@@ -134,12 +133,10 @@ export default function AssignmentsPage() {
     let matchesStartDate = true;
     let matchesEndDate = true;
     if (activeStartDate && a.createdAt) {
-      matchesStartDate = new Date(a.createdAt) >= new Date(activeStartDate);
+      matchesStartDate = getLocalDateString(new Date(a.createdAt)) >= activeStartDate;
     }
     if (activeEndDate && a.createdAt) {
-      const endD = new Date(activeEndDate);
-      endD.setHours(23, 59, 59, 999);
-      matchesEndDate = new Date(a.createdAt) <= endD;
+      matchesEndDate = getLocalDateString(new Date(a.createdAt)) <= activeEndDate;
     }
     return matchesSearch && matchesFilter && matchesStartDate && matchesEndDate;
   });
@@ -250,7 +247,7 @@ export default function AssignmentsPage() {
                     />
                     <Calendar className={styles.calendarIcon} size={18} style={{ pointerEvents: 'none' }} />
                     {showEndCalendar && (
-                      <div className={styles.customCalendar}>
+                      <div className={`${styles.customCalendar} ${styles.calendarUp}`}>
                         <div className={styles.calendarHeader}>
                           <button onClick={(e) => { e.preventDefault(); setCurrentEndMonth(new Date(currentEndMonth.getFullYear(), currentEndMonth.getMonth() - 1, 1)) }}>&lt;</button>
                           <span>{currentEndMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
@@ -326,7 +323,24 @@ export default function AssignmentsPage() {
         </div>
       </div>
       <div className={styles.grid}>
-        {filteredAssignments.map((assignment) => (
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={`skeleton-${i}`} className={`${styles.card} ${styles.skeletonCard}`}>
+              <div className={`${styles.cardHeader} ${styles.relative}`}>
+                <div className={styles.cardHeaderFlex}>
+                  <div className={styles.skeletonTitle}></div>
+                </div>
+              </div>
+              <div className={styles.cardFooter}>
+                <div className={styles.skeletonText}></div>
+                <div className={styles.skeletonText}></div>
+              </div>
+            </div>
+          ))
+        ) : filteredAssignments.length === 0 ? (
+          <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280', gridColumn: '1 / -1' }}>No assignments found.</div>
+        ) : (
+          filteredAssignments.map((assignment) => (
           <Link href={`/assignments/${assignment._id}`} key={assignment._id} className={styles.cardLink}>
             <div className={styles.card}>
               <div className={`${styles.cardHeader} ${styles.relative}`}>
@@ -365,7 +379,7 @@ export default function AssignmentsPage() {
               </div>
             </div>
           </Link>
-        ))}
+        )))}
       </div>
       <div className={styles.fabContainer}>
         <Link href="/assignments/new" className={styles.newAssignmentBtn}>
